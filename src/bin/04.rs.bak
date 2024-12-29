@@ -1,0 +1,140 @@
+advent_of_code::solution!(4);
+
+// Setps:
+// 1. Make create a matrix
+// 2. Get bounds of matrix
+// 3. Define functions for all directions
+// 4. iterate over entire matrix
+// 5. count all occurences
+
+fn get_matrix(input: &str) -> Vec<Vec<char>> {
+    let mut lines = Vec::new();
+    for line in input.lines() {
+        lines.push(line.chars().collect());
+    }
+    lines
+}
+
+fn hor_r(matrix: Vec<Vec<char>>, i: usize, j: usize, x: usize) -> u32{
+    let xmas = vec!['X','M','A','S'];
+    for k in 0..xmas.len() {
+        if (j + k) >= x || matrix[i][j + k] != xmas[k] {
+            return 0;
+        }
+    }
+    1
+}
+
+fn hor_l(matrix: Vec<Vec<char>>, i: usize, j: usize) -> u32{
+    let xmas = vec!['X','M','A','S'];
+    for k in 0..xmas.len() {
+        if (j as i32 - k as i32) < 0 || matrix[i][j - k] != xmas[k] {
+            return 0;
+        }
+    }
+    1
+}
+
+fn vert_d(matrix: Vec<Vec<char>>, i: usize, j: usize, y: usize) -> u32{
+    let xmas = vec!['X','M','A','S'];
+    for k in 0..xmas.len() {
+        if (i + k) >= y || matrix[i + k][j] != xmas[k] {
+            return 0;
+        }
+    }
+    1
+}
+fn vert_u(matrix: Vec<Vec<char>>, i: usize, j: usize) -> u32{
+    let xmas = vec!['X','M','A','S'];
+    for k in 0..xmas.len() {
+        if (i as i32 - k as i32) < 0 || matrix[i - k][j] != xmas[k] {
+            return 0;
+        }
+    }
+    1
+}
+
+fn diag_dr(matrix: Vec<Vec<char>>, i: usize, j: usize, x: usize, y: usize) -> u32{
+    let xmas = vec!['X','M','A','S'];
+    for k in 0..xmas.len() {
+        if (j + k ) >= x || (i + k) >= y || matrix[i + k][j + k] != xmas[k] {
+            return 0;
+        }
+    }
+    1
+}
+
+fn diag_dl(matrix: Vec<Vec<char>>, i: usize, j: usize, x: usize) -> u32{
+    let xmas = vec!['X','M','A','S'];
+    for k in 0..xmas.len() {
+        if (j as i32 - k as i32 ) < 0 || (i + k) >= x || matrix[i + k][j - k] != xmas[k] {
+            return 0;
+        }
+    }
+    1
+}
+
+fn diag_ur(matrix: Vec<Vec<char>>, i: usize, j: usize, y: usize) -> u32{
+    let xmas = vec!['X','M','A','S'];
+    for k in 0..xmas.len() {
+        if (j + k) >= y|| (i as i32 - k as i32) < 0 || matrix[i - k][j + k] != xmas[k] {
+            return 0;
+        }
+    }
+    // println!("i: {}, j{}", i, j);
+    1
+}
+
+fn diag_ul(matrix: Vec<Vec<char>>, i: usize, j: usize) -> u32{
+    let xmas = vec!['X','M','A','S'];
+    for k in 0..xmas.len() {
+        if (j as i32 - k as i32 ) < 0 || (i as i32 - k as i32) < 0 || matrix[i - k][j - k] != xmas[k] {
+            return 0;
+        }
+    }
+    // println!("i: {}, j{}", i, j);
+    1
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    let mut occurences = 0;
+    let matrix = get_matrix(input);
+    let x = matrix[0].len();
+    let y = matrix.len();
+    for (i, row) in matrix.iter().enumerate() {
+        for (j, val) in row.iter().enumerate() {
+            occurences += hor_r(matrix.clone(), i, j, x);
+            occurences += hor_l(matrix.clone(), i, j);
+            occurences += vert_d(matrix.clone(), i, j, y);
+            occurences += vert_u(matrix.clone(), i, j);
+            occurences += diag_dr(matrix.clone(), i, j, x, y);
+            occurences += diag_dl(matrix.clone(), i, j, x);
+            occurences += diag_ur(matrix.clone(), i, j, y);
+            occurences += diag_ul(matrix.clone(), i, j);
+            if *val == 'X' {
+            }
+        }
+    }
+    Some(occurences)
+}
+
+pub fn part_two(input: &str) -> Option<u32> {
+    None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_part_one() {
+        let result = part_one(&advent_of_code::template::read_file("examples", DAY));
+        assert_eq!(result, Some(18));
+    }
+
+    #[test]
+    fn test_part_two() {
+        let result = part_two(&advent_of_code::template::read_file("examples", DAY));
+        assert_eq!(result, Some(9));
+    }
+}
